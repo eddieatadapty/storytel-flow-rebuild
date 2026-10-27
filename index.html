@@ -1,0 +1,1537 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- flow-rebuild template (Growth Audit, v3: + walkthrough video, phone view/QR, localization, paywall today vs proposed). Replace every double-brace placeholder, everything between
+     the SCREENS markers, and the CONTENT json. Rules that brand-check.py enforces are marked RULE.
+     Reference builds: eddieatadapty.github.io/datacamp-flow-rebuild-v2 · bterzic123.github.io/planner5d-flow-rebuild-v2 -->
+<title>Storytel Growth Audit</title>
+<meta name="description" content="Five ideas to turn more Storytel users into subscribers, each built into a clickable version of Storytel's own onboarding. Prepared by Adapty.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- the APP's font (brand.json fonts, or the closest Google family) + a mono if the app shows code -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+/* BRAND:START — the only place the APP's colours are written as literals. Copied from storytel.com's design tokens
+   (brand.json) and sampled pixels of Storytel's own paywall screens (brand.json "sampled"). Used only inside the phone. */
+:root{
+  --b-primary:#101010;        /* their black pill CTA (--color-btn-primary-background-default) */
+  --b-primary-ink:#ffffff;
+  --b-bg:#ffffff;             /* paywall / languages screens */
+  --b-surface:#efedf0;        /* sampled: plan card footer */
+  --b-ink:#101010;
+  --b-ink2:#5c5c5c;           /* --color-typography-text-body */
+  --b-line:#e8e8e8;           /* --color-price-card-border-default */
+  --b-accent2:#ff501c;        /* Storytel orange: welcome headline, brand */
+  --b-select:#ff3801;         /* sampled: selected radio / checkbox */
+  --b-tag:#dbeefe;            /* sampled: "7 days for free" tag */
+  --b-dark:#101010;           /* welcome background, "Save 41%" tag */
+  --b-grad:linear-gradient(180deg,transparent,#101010);
+  --b-radius:12px;
+  --b-pill:999px;
+  --b-font:'DM Sans',-apple-system,system-ui,sans-serif;
+  --b-mono:ui-monospace,monospace;
+}
+/* BRAND:END */
+/* A second app family (e.g. a mono for code) is applied HERE, never in SCREENS css (brand-check allows only
+   var(--b-font) there). Prefix with .scr so it beats the screens' font shorthands, e.g.:
+   .scr .code,.scr .instr code{font-family:var(--b-mono)} */
+
+/* ================= the audit page — Adapty's, not the app's. Light, Apple-style. ================= */
+:root{
+  color-scheme:light;
+  --st-ground:#f5f5f7; --st-card:#ffffff; --st-ink:#1d1d1f; --st-ink2:#6e6e73; --st-ink3:#86868b;
+  --st-hair:rgba(0,0,0,.09); --st-link:#0066cc;
+  --st-accent:#101010;      /* dark brand colour of the APP: buttons, the outcome band */
+  --st-hi:#ff501c;          /* bright brand colour of the APP: outcome numbers on the band, idea dots */
+  --st-mark:rgba(255,80,28,.42); /* --st-hi at ~.5 alpha: the highlighter under impact numbers */
+  --st-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+html,body{margin:0}
+body{background:var(--st-ground);color:var(--st-ink);font-family:var(--st-font);-webkit-font-smoothing:antialiased;font-size:17px;line-height:1.47}
+.au-wrap{max-width:1080px;margin:0 auto;padding-inline:22px}
+a{color:var(--st-link)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--st-link);outline-offset:3px;border-radius:6px}
+mark{background:linear-gradient(transparent 62%,var(--st-mark) 62%,var(--st-mark) 92%,transparent 92%);color:inherit;padding:0 .04em}
+
+/* nav */
+.au-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(245,245,247,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--st-hair)}
+.au-nav-in{max-width:1080px;margin:0 auto;padding-inline:22px;height:52px;display:flex;align-items:center;gap:26px}
+.au-brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.au-brand img{width:26px;height:26px;border-radius:7px;flex:none}
+.au-brand span{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.au-brand small{font-size:15px;font-weight:400;color:var(--st-ink2)}
+.au-nav a{font-size:13px;color:var(--st-ink);text-decoration:none;opacity:.82}
+.au-nav a:hover{opacity:1}
+@media (max-width:560px){.au-nav a.au-opt{display:none}.au-brand small{display:none}}
+
+/* hero */
+.au-top-hero{text-align:center;padding-top:clamp(56px,9vw,96px);overflow:hidden;position:relative}
+.au-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--st-ink);margin:0 0 14px}
+.au-eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-display{font-size:clamp(60px,12vw,120px);line-height:.98;font-weight:700;letter-spacing:-.05em;margin:0}
+.au-lede{font-size:clamp(23px,3.4vw,34px);line-height:1.16;font-weight:600;letter-spacing:-.022em;max-width:760px;margin:22px auto 0;text-wrap:balance}
+.au-lede span{color:var(--st-ink2)}
+.au-byline{font-size:14px;color:var(--st-ink3);margin:18px 0 0}
+.au-ctas{display:flex;gap:26px;justify-content:center;align-items:center;margin-top:30px;flex-wrap:wrap}
+.au-btn{display:inline-block;background:var(--st-accent);color:#fff;border-radius:980px;padding:12px 23px;font-size:17px;font-weight:500;text-decoration:none;border:0;cursor:pointer}
+.au-btn:hover{filter:brightness(1.25)}
+.au-lnk{background:none;border:0;padding:0;color:var(--st-link);font-size:17px;text-decoration:none;cursor:pointer}
+.au-lnk::after{content:"\00a0›"}
+.au-lnk:hover{text-decoration:underline}
+.au-phones{display:flex;justify-content:center;align-items:flex-start;margin-top:clamp(40px,6vw,64px);height:clamp(300px,52vw,560px)}
+.au-hp{flex:none;border:0;padding:0;background:none;cursor:pointer;width:27%;max-width:290px;margin:0 -2.5%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.au-hp img{display:block;width:100%;height:auto;filter:drop-shadow(0 28px 50px rgba(0,0,0,.2))}
+.au-hp.au-c{width:31%;max-width:330px;z-index:2}
+.au-hp.au-l{transform:translateY(12%) rotate(-5deg)}
+.au-hp.au-r{transform:translateY(12%) rotate(5deg)}
+.au-hp.au-l:hover{transform:translateY(9%) rotate(-5deg)}.au-hp.au-r:hover{transform:translateY(9%) rotate(5deg)}.au-hp.au-c:hover{transform:translateY(-3%)}
+
+/* sections */
+.au-sec{padding-block:clamp(72px,10vw,120px)}
+.au-sec.au-white{background:var(--st-card)}
+.au-kicker{font-size:15px;font-weight:600;color:var(--st-ink2);margin:0 0 12px}
+.au-h2{font-size:clamp(34px,5.2vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.au-h2 span{color:var(--st-ink3)}
+.au-split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,6vw,80px);align-items:end}
+.au-split p{margin:0;font-size:clamp(17px,1.7vw,21px);line-height:1.45;color:var(--st-ink2);letter-spacing:-.01em}
+.au-split p b{color:var(--st-ink);font-weight:600}
+.au-split p + p{margin-top:16px}
+.au-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:clamp(48px,7vw,80px);border-top:1px solid var(--st-hair)}
+.au-stat{padding:28px 20px 0 0}
+.au-stat b{display:block;font-size:clamp(40px,5.5vw,64px);font-weight:700;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.au-stat span{display:block;font-size:15px;color:var(--st-ink2);margin-top:10px;max-width:22ch}
+.au-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,40px);margin-top:clamp(48px,7vw,72px)}
+.au-note h3{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:0 0 8px}
+.au-note p{margin:0;font-size:15.5px;line-height:1.5;color:var(--st-ink2)}
+.au-note .au-ic{width:36px;height:36px;border-radius:10px;background:var(--st-ground);display:grid;place-items:center;margin-bottom:16px}
+.au-note .au-ic svg{width:19px;height:19px;stroke:var(--st-accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ideas */
+.au-ideas-h{margin-bottom:clamp(32px,5vw,48px)}
+.au-list{background:var(--st-card);border-radius:28px;padding-inline:clamp(20px,4vw,44px)}
+.au-idea{display:grid;grid-template-columns:56px 1fr 220px;gap:20px;align-items:start;padding-block:clamp(26px,3.5vw,36px);border-top:1px solid var(--st-hair)}
+.au-idea:first-child{border-top:0}
+.au-idea .au-num{font-size:15px;font-weight:600;color:var(--st-ink3);font-variant-numeric:tabular-nums;padding-top:6px}
+.au-idea h3{font-size:clamp(21px,2.4vw,26px);line-height:1.2;font-weight:600;letter-spacing:-.022em;margin:0 0 8px}
+.au-idea p{margin:0 0 12px;font-size:17px;line-height:1.5;color:var(--st-ink2);max-width:58ch}
+.au-idea p code{font:600 15px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--st-ink);background:var(--st-ground);padding:2px 7px;border-radius:6px}
+.au-idea .au-lnk{font-size:15px}
+.au-imp{text-align:right}
+.au-imp .au-v{font-size:clamp(30px,3.6vw,40px);font-weight:700;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums;color:var(--st-accent)}
+.au-imp .au-l{font-size:13.5px;color:var(--st-ink2);margin-top:8px}
+.au-band{margin-top:20px;background:var(--st-accent);color:#fff;border-radius:28px;padding:clamp(32px,5vw,56px);display:grid;grid-template-columns:1fr auto;gap:clamp(28px,5vw,64px);align-items:center}
+.au-band .au-k{font-size:15px;font-weight:600;color:rgba(255,255,255,.62);margin:0 0 10px}
+.au-band h3{font-size:clamp(24px,3vw,32px);line-height:1.18;font-weight:600;letter-spacing:-.022em;margin:0;text-wrap:balance}
+.au-band .au-fn{font-size:13px;line-height:1.5;color:rgba(255,255,255,.55);margin:16px 0 0;max-width:52ch}
+.au-nums{display:flex;gap:clamp(28px,4vw,48px)}
+.au-nums small{display:block;font-size:13px;color:rgba(255,255,255,.62)}
+.au-nums b{display:block;font-size:clamp(48px,6.5vw,76px);font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-hi);font-variant-numeric:tabular-nums;margin:4px 0 8px}
+.au-nums span{font-size:14px;color:rgba(255,255,255,.8)}
+.au-band .au-btn{background:var(--st-hi);color:var(--st-accent);font-weight:600;margin-top:26px}
+
+/* prototype */
+.au-proto-h{text-align:center;max-width:720px;margin:0 auto}
+.au-proto-h p{font-size:clamp(17px,1.7vw,21px);color:var(--st-ink2);margin:14px 0 0}
+.au-seg{display:flex;gap:4px;justify-content:center;margin:clamp(28px,4vw,40px) auto 0;padding:4px;background:var(--st-ground);border-radius:980px;width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.au-seg::-webkit-scrollbar{display:none}
+.au-chip{flex:none;display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--st-ink2);font-size:13.5px;font-weight:500;padding:8px 14px;border-radius:980px;cursor:pointer;white-space:nowrap}
+.au-chip:hover{color:var(--st-ink)}
+.au-chip.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.au-chip i{font-style:normal;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--st-hi);color:var(--st-accent)}
+.au-stage{display:grid;grid-template-columns:auto minmax(0,420px);gap:clamp(32px,6vw,72px);justify-content:center;align-items:center;margin-top:clamp(28px,4vw,44px)}
+.phone{width:390px;height:844px;border-radius:56px;padding:10px;background:#0b0d10;box-shadow:0 0 0 1.5px #3a3d42,0 40px 90px rgba(0,0,0,.25);max-width:calc(100vw - 44px)}
+.phone-in{position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--b-bg)}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#000;z-index:9}
+.sbar{position:absolute;top:0;left:0;right:0;height:52px;display:flex;justify-content:space-between;align-items:center;padding:4px 32px 0;font:600 15px -apple-system,system-ui,sans-serif;color:var(--b-ink);z-index:8;pointer-events:none}
+.au-pn{background:var(--st-ground);border-radius:28px;padding:clamp(26px,3.5vw,38px)}
+.au-pn-k{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--st-ink)}
+.au-pn-k i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-pn-k.au-ctx{color:var(--st-ink2)}.au-pn-k.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-pn-t{font-size:clamp(24px,2.6vw,30px);line-height:1.12;font-weight:700;letter-spacing:-.028em;margin:10px 0 14px;text-wrap:balance}
+.au-pn-h{margin:0;font-size:17px;line-height:1.55;color:var(--st-ink2)}
+.au-pn-h b{color:var(--st-ink);font-weight:600}
+.au-pn-o{margin-top:24px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-pn-o .au-lab{font-size:13px;font-weight:600;color:var(--st-ink3)}
+.au-pn-o .au-val{font-size:clamp(38px,4.4vw,50px);font-weight:700;letter-spacing:-.04em;line-height:1.05;color:var(--st-accent);margin-top:6px;font-variant-numeric:tabular-nums}
+.au-pn-o .au-sub{font-size:14px;color:var(--st-ink2);margin-top:4px}
+.au-pn-a{margin:18px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-pn-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:28px;padding-top:18px;border-top:1px solid var(--st-hair);font-size:13px;color:var(--st-ink3)}
+.au-pn-nav button{background:var(--st-card);border:0;border-radius:980px;padding:8px 15px;font-size:14px;font-weight:500;color:var(--st-ink);cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.au-pn-nav button:disabled{opacity:.35;cursor:default}
+.au-hint{text-align:center;font-size:14px;color:var(--st-ink3);margin:22px 0 0}
+
+/* footer */
+.au-foot{padding-block:56px 72px;border-top:1px solid var(--st-hair)}
+.au-foot details{border-bottom:1px solid var(--st-hair);padding-bottom:18px}
+.au-foot summary{cursor:pointer;font-size:17px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.au-foot summary::-webkit-details-marker{display:none}
+.au-foot summary::after{content:"+";font-size:24px;font-weight:300;color:var(--st-ink2)}
+.au-foot details[open] summary::after{content:"−"}
+.au-srcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 48px;margin-top:18px}
+.au-srcs h4{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--st-ink3);margin:18px 0 6px}
+.au-srcs dl{margin:0}.au-srcs dt{font-size:14.5px;font-weight:600;margin-top:10px}
+.au-srcs dd{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-fine{font-size:12.5px;line-height:1.6;color:var(--st-ink3);margin:22px 0 0;max-width:80ch}
+.au-cta-line{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:36px}
+.au-cta-line p{margin:0;font-size:clamp(19px,2.2vw,24px);font-weight:600;letter-spacing:-.02em;max-width:34ch}
+
+@media (max-width:900px){
+  .au-split,.au-band{grid-template-columns:1fr}
+  .au-notes{grid-template-columns:1fr}
+  .au-idea{grid-template-columns:40px 1fr}
+  .au-imp{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:10px}
+  .au-imp .au-l{margin:0}
+  .au-imp .au-v{white-space:nowrap}
+  .au-stage{grid-template-columns:1fr;justify-items:center}
+  .au-pn{width:100%;max-width:520px}
+  .au-srcs{grid-template-columns:1fr}
+}
+@media (max-width:560px){.au-stats{grid-template-columns:1fr}.au-stat{padding:22px 0 0}.au-nums{flex-direction:column;gap:18px}}
+
+/* ================= extras (audit side): video, language, phone view + QR, paywall today vs proposed, ?tour ================= */
+[hidden]{display:none!important}
+/* the device never scrolls: off-screen slides would otherwise make it scrollable by focus / scrollIntoView */
+.phone-in,.scr{overflow:clip}
+/* hero: walkthrough link */
+.au-play::before{content:"▶";font-size:.72em;margin-right:7px;position:relative;top:-1px}
+/* video dialog */
+.au-vid{border:0;padding:0;background:transparent;max-width:min(1120px,94vw);width:100%;overflow:visible}
+.au-vid::backdrop{background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.au-vid-in{background:#000;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.au-vid video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.au-vid-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 4px 0;font-size:14px}
+.au-vid-bar a{color:#fff;opacity:.85}
+.au-vid-x{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:980px;padding:8px 16px;font-size:14px;cursor:pointer}
+/* language switch */
+.au-langrow{display:flex;justify-content:center;align-items:center;gap:12px;margin:18px 0 0;font-size:13.5px;color:var(--st-ink2);flex-wrap:wrap}
+.au-lsw{display:inline-flex;gap:2px;padding:3px;background:var(--st-ground);border-radius:980px}
+.au-lsw button{border:0;background:none;padding:6px 13px;border-radius:980px;font-size:13.5px;font-weight:500;color:var(--st-ink2);cursor:pointer;white-space:nowrap}
+.au-lsw button.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* QR card (desktop) / full-screen button (phone) */
+.au-qr{display:flex;align-items:center;gap:18px;margin:26px auto 0;max-width:500px;background:var(--st-ground);border-radius:22px;padding:14px 22px 14px 14px}
+.au-qr img{width:112px;height:112px;border-radius:12px;image-rendering:pixelated;flex:none;background:#fff}
+.au-qr b{display:block;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.au-qr p{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:var(--st-ink2)}
+.au-mobw{display:none;text-align:center;margin-top:22px}
+@media (max-width:900px){.au-qr{display:none}.au-mobw{display:block}}
+/* paywall: today vs proposed */
+.au-cmp{display:grid;grid-template-columns:minmax(0,290px) minmax(0,1fr) minmax(0,290px);gap:clamp(24px,4vw,52px);align-items:center;margin-top:clamp(32px,5vw,52px)}
+.au-cmp figure{margin:0;text-align:center}
+.au-cmp figure img{display:block;width:100%;height:auto;filter:drop-shadow(0 24px 44px rgba(0,0,0,.18))}
+.au-cmp figcaption{margin-top:14px;font-size:15px;font-weight:600}
+.au-cmp figcaption span{color:var(--st-ink2);font-weight:400}
+.au-cmp-go{border:0;padding:0;background:none;cursor:pointer;display:block;width:100%;transition:transform .3s}
+.au-cmp-go:hover{transform:translateY(-4px)}
+.au-chg{list-style:none;margin:0;background:var(--st-card);border-radius:24px;padding:4px clamp(18px,2.4vw,28px)}
+.au-chg li{padding:15px 0;border-top:1px solid var(--st-hair)}
+.au-chg li:first-child{border-top:0}
+.au-chg h4{margin:0 0 7px;font-size:16px;font-weight:600;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.au-chg h4 i{font-style:normal;font-size:12px;font-weight:600;color:var(--st-accent);background:var(--st-mark);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.au-was,.au-now{display:grid;grid-template-columns:78px 1fr;gap:8px;font-size:14.5px;line-height:1.42}
+.au-was{color:var(--st-ink3)}
+.au-now{color:var(--st-ink);margin-top:3px}
+.au-was em,.au-now em{font-style:normal;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.au-now em{color:var(--st-link)}
+.au-kept{margin:22px 0 0;font-size:14px;color:var(--st-ink2);text-align:center}
+@media (max-width:900px){.au-cmp{grid-template-columns:1fr 1fr;gap:18px}.au-chg{grid-column:1 / -1;order:3}.au-was,.au-now{grid-template-columns:70px 1fr}}
+
+/* ?app — the prototype full screen on a real phone, with a bar that opens the idea panel */
+html.appmode,html.appmode body{height:100%;overflow:hidden;background:#000}
+html.appmode .au-nav,html.appmode .au-top-hero,html.appmode #why,html.appmode #ideas,html.appmode #compare,html.appmode .au-foot,
+html.appmode .au-proto-h,html.appmode #prototype .au-langrow,html.appmode #chips,html.appmode .au-hint,html.appmode .au-qr,html.appmode .au-mobw{display:none!important}
+html.appmode #prototype{padding:0;background:#000}
+html.appmode #prototype .au-wrap{padding:0;max-width:none}
+html.appmode .au-stage{display:block;margin:0}
+html.appmode .phone{position:fixed;top:0;left:0;right:0;margin:0 auto;width:min(100%,480px);height:calc(100% - 56px - env(safe-area-inset-bottom,0px));max-width:none;border-radius:0;padding:0;box-shadow:none;background:#000}
+html.appmode .phone-in{border-radius:0}
+html.appmode .island,html.appmode .sbar{display:none}
+html.appmode .scr .s-pad{padding-top:max(58px,calc(env(safe-area-inset-top,0px) + 16px))}
+html.appmode .scr .s-x,html.appmode .scr .s-lang{top:max(54px,calc(env(safe-area-inset-top,0px) + 10px))}
+.au-appbar,.au-scrim{display:none}
+html.appmode .au-appbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:70;height:calc(56px + env(safe-area-inset-bottom,0px));padding:0 12px env(safe-area-inset-bottom,0px) 16px;align-items:center;gap:12px;background:#0b0b0c;border-top:1px solid rgba(255,255,255,.1);color:#fff}
+.au-ab-why{flex:1;min-width:0;display:flex;align-items:center;gap:9px;background:none;border:0;color:#fff;font-size:14px;font-weight:500;text-align:left;cursor:pointer;padding:0}
+.au-ab-why i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);flex:none}
+.au-ab-why span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.au-ab-why em{font-style:normal;color:rgba(255,255,255,.6);margin-left:auto;flex:none;font-size:13px}
+.au-appbar .au-lsw{background:rgba(255,255,255,.12)}
+.au-appbar .au-lsw button{color:rgba(255,255,255,.75);padding:5px 11px}
+.au-appbar .au-lsw button.on{background:#fff;color:#000}
+html.appmode #panel{position:fixed;left:0;right:0;bottom:0;z-index:80;max-width:none;width:auto;margin:0 auto;border-radius:24px 24px 0 0;max-height:78%;overflow:auto;transform:translateY(105%);transition:transform .3s cubic-bezier(.3,.7,.2,1);padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+html.appmode.au-open #panel{transform:none}
+html.appmode.au-open .au-scrim{display:block;position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.5)}
+
+/* ?tour — 1280×720 walkthrough frames (record-video.sh renders them into assets/walkthrough.mp4) */
+.au-tour{display:none}
+html.tourmode,html.tourmode body{overflow:hidden;background:var(--st-ground)}
+html.tourmode body *{visibility:hidden}
+html.tourmode .phone,html.tourmode .phone *,html.tourmode .au-tour,html.tourmode .au-tour *{visibility:visible}
+html.tourmode .phone{position:fixed;left:170px;top:44px;margin:0;transform:scale(.755);transform-origin:0 0;box-shadow:0 0 0 1.5px #3a3d42,0 34px 80px rgba(0,0,0,.22);z-index:5;max-width:none}
+html.tourmode .au-tour{display:block;position:fixed;inset:0;z-index:6;pointer-events:none;color:var(--st-ink)}
+.au-tb{position:absolute;left:590px;top:30px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600}
+.au-tb img{width:26px;height:26px;border-radius:7px}
+.au-tb small{font-size:16px;font-weight:400;color:var(--st-ink2)}
+.au-tby{position:absolute;right:48px;top:32px;font-size:14px;color:var(--st-ink3)}
+.au-tcap{position:absolute;left:590px;right:60px;top:50%;transform:translateY(-50%)}
+.au-tk{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600}
+.au-tk i{width:9px;height:9px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-tk.au-ctx{color:var(--st-ink2)}.au-tk.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-tt{font-size:46px;line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:14px 0 14px;text-wrap:balance}
+.au-tl{font-size:23px;line-height:1.36;color:var(--st-ink2);letter-spacing:-.01em;margin:0;max-width:28ch}
+.au-to{margin-top:28px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-to small{display:block;font-size:14px;font-weight:600;color:var(--st-ink3)}
+.au-to b{display:inline-block;font-size:62px;font-weight:700;letter-spacing:-.045em;line-height:1.08;color:var(--st-accent);margin-top:4px}
+.au-to span{display:block;font-size:16px;color:var(--st-ink2);margin-top:2px}
+.au-tprog{position:absolute;left:48px;right:48px;bottom:22px;height:4px;border-radius:3px;background:var(--st-hair);overflow:hidden}
+.au-tprog i{display:block;height:100%;background:var(--st-hi)}
+.au-ttap{position:absolute;left:0;top:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.5);box-shadow:0 0 0 2.5px rgba(255,255,255,.9),0 6px 16px rgba(0,0,0,.35);opacity:0}
+.au-tintro,.au-tend{position:absolute;inset:0;background:var(--st-ground);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0}
+.au-tintro .au-lede{margin-top:18px}
+.au-te-h{font-size:46px;line-height:1.08;font-weight:700;letter-spacing:-.035em;margin:0;max-width:18ch;text-wrap:balance}
+.au-te-n{display:flex;gap:64px;margin-top:30px}
+.au-te-n small{display:block;font-size:14px;color:var(--st-ink2)}
+.au-te-n b{display:block;font-size:76px;font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-accent);margin:4px 0 6px}
+.au-te-n span{font-size:15px;color:var(--st-ink2)}
+.au-te-q{display:flex;align-items:center;gap:18px;margin-top:34px;background:var(--st-card);border-radius:20px;padding:12px 24px 12px 12px;text-align:left}
+.au-te-q img{width:104px;height:104px;border-radius:10px;image-rendering:pixelated}
+.au-te-q b{display:block;font-size:18px;font-weight:600}
+.au-te-q span{display:block;font-size:15px;color:var(--st-link);margin-top:3px}
+.au-te-f{position:absolute;bottom:44px;left:0;right:0;font-size:13px;color:var(--st-ink3);margin:0}
+
+/* ---------- screen engine (layout only, no colours) ---------- */
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--b-bg);color:var(--b-ink);font-family:var(--b-font);
+     transform:translateX(100%);transition:transform .32s cubic-bezier(.3,.7,.2,1);overflow:hidden;text-align:left;line-height:normal;font-size:16px}
+.scr.is-active{transform:none;z-index:2}.scr.is-past{transform:translateX(-28%)}.scr.under{transform:none;z-index:1}
+.scr.sheet{transform:translateY(100%)}.scr.sheet.is-active{transform:none}
+.nofx,.nofx *{transition:none!important}
+.shot .scr{transition:none!important}
+/* ?phone — just the device at (10,10), for shoot.sh and hero-stills.sh (&clear = transparent ground) */
+.phoneonly body{background:#141615}
+.phoneonly.clear body{background:transparent}
+.phoneonly body *{visibility:hidden}
+.phoneonly .phone,.phoneonly .phone *{visibility:visible}
+.phoneonly .phone{position:fixed;top:10px;left:10px;z-index:99;box-shadow:none;max-width:none;margin:0}
+
+/* SCREENS:START — Storytel's screens. Colours only via var(--b-*) or white/black alpha. */
+.scr.dk{background:var(--b-dark);color:white}
+/* welcome — their entry screen, kept */
+.wl-art{position:absolute;left:0;right:0;top:0;height:560px;overflow:hidden}
+.wl-art img{width:100%;display:block}
+.wl-art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,var(--b-dark) 96%)}
+.wl-body{position:relative;z-index:1;margin-top:auto;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 26px 46px}
+.wl-h{font:700 44px/1.06 var(--b-font);color:var(--b-accent2);margin:0 0 14px;letter-spacing:-.5px}
+.wl-sub{font:400 15px/1.4 var(--b-font);color:white;margin:0 0 30px}
+.wl-sub b{font-weight:700}
+.wl-cta{width:100%;max-width:300px;border:0;border-radius:var(--b-pill);background:white;color:var(--b-ink);font:700 16px var(--b-font);padding:15px;cursor:pointer}
+.wl-login{background:none;border:0;color:white;font:700 16px var(--b-font);margin-top:20px;padding:6px;cursor:pointer}
+/* languages — kept */
+.lg-body{flex:1;display:flex;flex-direction:column;padding:72px 0 30px}
+.lg-h{font:700 21px var(--b-font);text-align:center;margin:0 22px 10px}
+.lg-sub{font:400 15px/1.38 var(--b-font);text-align:center;color:var(--b-ink);margin:0 22px 22px}
+.lg-row{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:0;padding:15px 22px;font:500 16px var(--b-font);color:var(--b-ink);cursor:pointer;text-align:left}
+.cbx{flex:none;width:20px;height:20px;border-radius:5px;border:1.6px solid var(--b-ink2);position:relative}
+.lg-row.on .cbx{background:var(--b-select);border-color:var(--b-select)}
+.lg-row.on .cbx::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.bk-cta{margin:auto 16px 0;border:0;border-radius:var(--b-pill);background:var(--b-primary);color:var(--b-primary-ink);font:700 16px var(--b-font);padding:15px;cursor:pointer}
+.bk-cta:disabled{opacity:.35}
+/* proposed paywall */
+.pw-x{position:absolute;top:56px;right:16px;z-index:4;width:34px;height:34px;border-radius:50%;border:0;background:white;color:var(--b-ink);font:600 15px var(--b-font);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.pw-art{position:relative;height:212px;overflow:hidden;flex:none}
+.pw-art img{width:100%;height:100%;object-fit:cover;display:block}
+.pw-art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0,rgba(0,0,0,0) 30%,rgba(255,255,255,0) 50%,var(--b-bg) 97%)}
+.pw-body{flex:1;display:flex;flex-direction:column;padding:0 16px 22px;margin-top:-18px;position:relative;z-index:1}
+.pw-h{font:700 24px/1.17 var(--b-font);text-align:center;margin:0 6px 8px;letter-spacing:-.2px}
+.pw-proof{display:flex;justify-content:center;align-items:center;gap:6px;font:500 13px var(--b-font);color:var(--b-ink2);margin:0 0 14px}
+.pw-stars{color:var(--b-accent2);letter-spacing:1px;font-size:13px}
+.pcard{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;text-align:left;background:var(--b-bg);border:1.5px solid var(--b-line);border-radius:var(--b-radius);padding:13px 14px;margin-bottom:10px;color:var(--b-ink);font-family:var(--b-font);cursor:pointer}
+.pcard.on{border-color:var(--b-select)}
+.pc-l{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.pc-l b{font:700 16px var(--b-font)}
+.pc-bill{font:400 15px var(--b-font)}
+.pc-sm{font:400 13px var(--b-font);color:var(--b-ink2)}
+.pc-sm b{color:var(--b-ink);font-weight:700}
+.pc-tag{display:inline-block;background:var(--b-tag);color:var(--b-ink);font:700 12px var(--b-font);padding:4px 8px;border-radius:5px}
+.pc-save{position:absolute;top:-11px;right:12px;background:var(--b-dark);color:white;font:700 12px var(--b-font);padding:4px 8px;border-radius:5px}
+.radio{flex:none;width:21px;height:21px;border-radius:50%;border:1.6px solid var(--b-ink2);position:relative}
+.on>.radio{border-color:var(--b-select)}
+.on>.radio::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--b-select)}
+.pw-ben{list-style:none;margin:6px 0 0;padding:0 4px;display:flex;flex-direction:column;gap:9px}
+.pw-ben li{display:flex;gap:12px;font:400 14px var(--b-font);color:var(--b-ink)}
+.pw-ben li::before{content:"✓";font-weight:700}
+.pw-cta{margin-top:auto;width:100%;border:0;border-radius:var(--b-pill);background:var(--b-primary);color:var(--b-primary-ink);font:700 16px var(--b-font);padding:15px;cursor:pointer}
+.pw-fine{font:400 12px/1.35 var(--b-font);color:var(--b-ink2);text-align:center;margin:9px 0 6px}
+.pw-legal{display:flex;justify-content:center;gap:16px;font:500 11px var(--b-font);color:var(--b-ink2)}
+.pw-legal span{text-decoration:underline}
+/* sheets: confirm (free week) and offer on close */
+.scr.sheet{background:transparent}
+.sh-scrim{flex:1;min-height:120px;background:rgba(0,0,0,.45);cursor:pointer}
+.sh-panel{position:relative;background:var(--b-bg);border-radius:22px 22px 0 0;padding:12px 18px 30px;display:flex;flex-direction:column;color:var(--b-ink)}
+.sh-grab{display:block;width:38px;height:5px;border-radius:3px;background:var(--b-line);margin:0 auto 14px}
+.sh-h{font:700 21px var(--b-font);text-align:center;margin:4px 0 6px}
+.sh-sub{display:flex;justify-content:center;align-items:center;gap:8px;margin:4px 0 14px;font:700 17px var(--b-font)}
+.sh-sub2{font:400 14px/1.4 var(--b-font);text-align:center;color:var(--b-ink2);margin:0 0 16px}
+.tl{list-style:none;margin:0 0 6px;padding:0 4px}
+.tl li{display:flex;gap:14px;position:relative;padding-bottom:16px}
+.tl li:not(:last-child)::before{content:"";position:absolute;left:10px;top:24px;bottom:2px;width:2px;background:var(--b-line)}
+.tl-dot{flex:none;width:22px;height:22px;border-radius:50%;background:var(--b-surface);display:grid;place-items:center;font:700 11px var(--b-font);color:var(--b-ink);font-style:normal}
+.tl-dot.on{background:var(--b-select);color:white}
+.tl b{display:block;font:700 15px var(--b-font)}
+.tl span{display:block;font:400 14px/1.35 var(--b-font);color:var(--b-ink2);margin-top:2px}
+.sh-fine{font:400 12px/1.4 var(--b-font);color:var(--b-ink2);text-align:center;margin:4px 6px 16px}
+.sh-mo{font:400 15px/1.4 var(--b-font);text-align:center;margin:4px 0 10px}
+.sh-legal{font:400 12px var(--b-font);color:var(--b-ink2);text-align:center;margin:10px 0 0}
+.sh-x{position:absolute;top:14px;right:16px;background:none;border:0;color:var(--b-ink);font:500 20px var(--b-font);cursor:pointer}
+.ocard{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;background:var(--b-bg);border:1.5px solid var(--b-line);border-radius:var(--b-radius);padding:14px;margin-bottom:10px;color:var(--b-ink);font-family:var(--b-font);cursor:pointer}
+.ocard.on{border-color:var(--b-select)}
+.oc-l{display:flex;flex-direction:column;align-items:flex-start;gap:5px}
+.oc-l b{font:700 16px var(--b-font)}
+.oc-l small{font:400 13px/1.35 var(--b-font);color:var(--b-ink2)}
+.sh-link{background:none;border:0;color:var(--b-ink);font:700 15px var(--b-font);margin-top:12px;padding:6px;cursor:pointer}
+.apnote{display:none;margin-top:10px;text-align:center;font:600 13px var(--b-font);color:var(--b-ink);background:var(--b-surface);border-radius:10px;padding:10px}
+.done .apnote{display:block}
+.sw-tag{text-align:center;margin:2px 0 4px}
+.sw-tag span{display:inline-block;background:var(--b-dark);color:white;font:700 12px var(--b-font);padding:4px 8px;border-radius:5px}
+.sw-rows{display:flex;flex-direction:column;gap:8px;margin:0 0 18px}
+.sw-row{display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--b-line);border-radius:var(--b-radius);padding:13px 14px;font:500 15px var(--b-font);color:var(--b-ink2)}
+.sw-row b{font:700 15px var(--b-font);color:var(--b-ink2)}
+.sw-row.sw-on{border-color:var(--b-select);color:var(--b-ink)}
+.sw-row.sw-on b{color:var(--b-ink)}
+/* today — their live paywall, rebuilt word for word (aside, for the side-by-side) */
+.td-x{position:absolute;top:58px;right:20px;background:none;border:0;color:var(--b-ink);font:400 24px var(--b-font)}
+.td-body{padding:96px 16px 30px;display:flex;flex-direction:column}
+.td-h{font:700 23px/1.25 var(--b-font);text-align:center;margin:0 18px 12px}
+.td-sub{font:400 15px/1.4 var(--b-font);text-align:center;margin:0 22px 20px}
+.td-card{border:1.5px solid var(--b-line);border-radius:var(--b-radius);overflow:hidden}
+.td-top{padding:16px 14px 14px}
+.td-row{display:flex;justify-content:space-between;align-items:baseline}
+.td-row b{font:700 19px var(--b-font)}
+.td-row span{font:700 13px var(--b-font)}
+.td-spec{display:inline-block;background:var(--b-tag);font:700 12px var(--b-font);padding:5px 8px;border-radius:5px;margin:10px 0}
+.td-top h4{font:700 13px var(--b-font);margin:0 0 2px}
+.td-top p{font:400 13px var(--b-font);margin:0}
+.td-foot{background:var(--b-surface);padding:12px 14px;text-align:right;font:700 13px var(--b-font);color:var(--b-select)}
+.td-alw{font:700 17px var(--b-font);text-align:center;margin:28px 0 14px}
+.td-list{list-style:none;margin:0;padding:0 6px;display:flex;flex-direction:column;gap:17px}
+.td-list li{display:flex;gap:14px;font:400 15px var(--b-font)}
+.td-list li::before{content:"✓"}
+/* SCREENS:END */
+</style>
+</head>
+<body>
+
+<nav class="au-nav" aria-label="Sections">
+  <div class="au-nav-in">
+    <div class="au-brand">
+      <img src="assets/brand/appstore-icon.jpg" alt="">
+      <span>Growth Audit <small>· Storytel</small></span>
+    </div>
+    <a class="au-opt" href="#why">Why this</a>
+    <a href="#ideas">Five ideas</a>
+    <a href="#prototype">Prototype</a>
+    <a class="au-opt" href="#compare" id="navCompare" hidden>Paywall</a>
+  </div>
+</nav>
+
+<header class="au-top-hero" id="top">
+  <div class="au-wrap">
+    <p class="au-eyebrow"><i></i>Growth Audit · October 2026</p>
+    <h1 class="au-display">Storytel</h1>
+    <p class="au-lede">Five ideas to turn more Storytel listeners into subscribers. <span>Each one built into your own paywall, so you can tap through it on a phone.</span></p>
+    <p class="au-byline">Prepared by Adapty for the Storytel team</p>
+    <div class="au-ctas">
+      <a class="au-btn" href="#ideas">See the five ideas</a>
+      <a class="au-lnk" href="#prototype">Open the prototype</a>
+      <button type="button" class="au-lnk au-play" id="heroVideo" hidden>Watch the 30-second walkthrough</button>
+    </div>
+  </div>
+  <!-- filled from CONTENT.hero: three screen ids → assets/hero/<id>.png (make them with hero-stills.sh) -->
+  <div class="au-phones" id="heroPhones" aria-label="Three screens from the prototype"></div>
+</header>
+
+<section class="au-sec au-white" id="why">
+  <div class="au-wrap">
+    <div class="au-split">
+      <div>
+        <p class="au-kicker">Why you’re seeing this</p>
+        <h2 class="au-h2">30,000 subscription apps taught us what moves conversion. <span>Here’s what we’d test first at Storytel.</span></h2>
+      </div>
+      <div>
+        <p>Adapty runs subscriptions for <b>more than 30,000 apps</b>, so we see which onboarding and paywall changes lift revenue across the whole market, not just inside one app.</p>
+        <p>We pointed that at Storytel. We took <b>your own screens, copy and prices</b> from your live iOS flow and App Store listing, and rebuilt your paywall, and what happens when someone closes it, around the five ideas with the most potential.</p>
+      </div>
+    </div>
+    <div class="au-stats">
+      <div class="au-stat"><b>30,000+</b><span>apps run their subscriptions on Adapty</span></div>
+      <div class="au-stat"><b>5</b><span>ideas, each built as a working screen</span></div>
+      <div class="au-stat"><b>0</b><span>changes to your art direction</span></div>
+    </div>
+    <div class="au-notes">
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg></div>
+        <h3>Five ideas, not fifteen</h3>
+        <p>We’re not proposing to rebuild every screen. These are the changes with the highest potential, ranked by what we’d test first.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg></div>
+        <h3>Your design, not ours</h3>
+        <p>Every colour, control and price in the prototype is Storytel’s. We changed the order and what gets shown.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13A1.5 1.5 0 0 1 5.5 4H15"/></svg></div>
+        <h3>We hope you haven’t tried these yet</h3>
+        <p>We work from the outside, so we can’t see your test history. If you’ve already run one of these, tell us and we’ll go deeper on the rest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec" id="ideas">
+  <div class="au-wrap">
+    <div class="au-ideas-h">
+      <p class="au-kicker">The shortlist</p>
+      <h2 class="au-h2">Five ideas. <span>Ranked by what we’d test first.</span></h2>
+    </div>
+    <div class="au-list" id="ideaList"></div>
+    <div class="au-band">
+      <div>
+        <p class="au-k">Potential outcome, based on Adapty data</p>
+        <h3>Together they work on three moments: how fast someone reaches the price, how sure they feel about the free week, and what happens when they say no.</h3>
+        <p class="au-fn" id="bandFn"></p>
+        <a class="au-btn" href="#prototype">Tap through the prototype</a>
+      </div>
+      <div class="au-nums" id="bandNums"></div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec au-white" id="prototype">
+  <div class="au-wrap">
+    <div class="au-proto-h">
+      <p class="au-kicker">The prototype</p>
+      <h2 class="au-h2">Every idea, inside your own paywall.</h2>
+      <p>Tap through it like a new user, or jump straight to an idea. Numbered chips mark the screens that carry one.</p>
+    </div>
+    <div class="au-langrow" id="langRow" hidden><span>Prototype language</span><div class="au-lsw" id="langSw" role="group" aria-label="Prototype language"></div></div>
+    <div class="au-seg" id="chips" role="tablist" aria-label="Screens"></div>
+    <div class="au-stage">
+      <div class="phone"><div class="phone-in">
+        <div class="island"></div>
+        <div class="sbar"><span>9:41</span><span>●●● ▮</span></div>
+
+<!-- SCREENS:START — Storytel: their entry screen → their languages screen → proposed paywall → free-week confirm sheet → offer on close.
+     The paywall TODAY (data-aside) is rebuilt word for word for the side-by-side. -->
+
+<section class="scr dk" data-id="welcome">
+  <div class="wl-art"><img src="assets/crop/covers-wall.png" alt=""></div>
+  <div class="wl-body">
+    <h1 class="wl-h" data-t="wl_h">Audiobooks<br>for everyone</h1>
+    <p class="wl-sub" data-t="wl_sub"><b>800 000+</b> best-selling stories and Originals.<br>Cancel anytime.</p>
+    <button class="wl-cta" data-go="langs" data-t="wl_cta">Create account</button>
+    <button class="wl-login" data-go="langs" data-t="wl_login">Log in</button>
+  </div>
+</section>
+
+<section class="scr" data-id="langs">
+  <div class="lg-body">
+    <h1 class="lg-h" data-t="lg_h">Select your languages</h1>
+    <p class="lg-sub" data-t="lg_sub">Discover stories in your languages, unique for every device. It’s easy to update this at any time in settings.</p>
+    <button class="lg-row" data-toggle="langs:es"><span data-t="l_es">Spanish</span><i class="cbx"></i></button>
+    <button class="lg-row" data-toggle="langs:en"><span data-t="l_en">English</span><i class="cbx"></i></button>
+    <button class="lg-row" data-toggle="langs:pt"><span data-t="l_pt">Portuguese</span><i class="cbx"></i></button>
+    <button class="lg-row" data-toggle="langs:fr"><span data-t="l_fr">French</span><i class="cbx"></i></button>
+    <button class="lg-row" data-toggle="langs:it"><span data-t="l_it">Italian</span><i class="cbx"></i></button>
+    <button class="lg-row" data-toggle="langs:de"><span data-t="l_de">German</span><i class="cbx"></i></button>
+    <button class="lg-row" data-toggle="langs:ru"><span data-t="l_ru">Russian</span><i class="cbx"></i></button>
+    <button class="bk-cta" data-go="paywall" data-requires="langs"><span data-t="cta_cont">Continue</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="paywall">
+  <button class="pw-x" data-go="offer" aria-label="Close">✕</button>
+  <div class="pw-art"><img src="assets/crop/covers-strip.png" alt=""></div>
+  <div class="pw-body">
+    <h1 class="pw-h" data-t="pw_h">Stories in <span data-langs></span>, free for 7 days</h1>
+    <p class="pw-proof"><span class="pw-stars">★★★★★</span><span data-t="pw_proof">4.7 · 11K ratings on the App Store</span></p>
+    <button class="pcard" data-pick="plan:yr">
+      <span class="pc-save"><span data-t="pw_save">Save 41%</span></span>
+      <span class="pc-l"><b data-t="pw_yr_name">Unlimited annual</b><span class="pc-tag" data-t="pw_tag">7 days for free</span><span class="pc-sm" data-t="pw_yr_price">$59.99/year · <b>$5.00/month</b></span></span>
+      <i class="radio"></i>
+    </button>
+    <button class="pcard" data-pick="plan:mo">
+      <span class="pc-l"><b data-t="pw_mo_name">Unlimited monthly</b><span class="pc-sm" data-t="pw_mo_price">$8.49/month</span></span>
+      <i class="radio"></i>
+    </button>
+    <ul class="pw-ben">
+      <li><span data-t="pw_b1">800 000+ stories and Storytel Originals</span></li>
+      <li><span data-t="pw_b2">Download and enjoy stories offline</span></li>
+      <li><span data-t="pw_b3">Child-safe environment (Kids mode)</span></li>
+      <li><span data-t="pw_b4">Cancel anytime</span></li>
+    </ul>
+    <button class="pw-cta pw-cta-yr" data-go="confirm" data-show="plan:yr"><span data-t="pw_cta_yr">Start my 7 free days</span></button>
+    <button class="pw-cta pw-cta-mo" data-go="switch" data-show="plan:mo"><span data-t="pw_cta_mo">Continue with monthly</span></button>
+    <p class="pw-fine"><span data-show="plan:yr"><span data-t="pw_fine_yr">7 days free, then $59.99/year. Cancel anytime in your profile.</span></span><span data-show="plan:mo"><span data-t="pw_fine_mo">$8.49/month. Cancel anytime in your profile.</span></span></p>
+    <div class="pw-legal"><span data-t="lg_terms">Terms of use</span><span data-t="lg_priv">Privacy Policy</span><span data-t="lg_rest">Restore</span></div>
+  </div>
+</section>
+
+<section class="scr sheet" data-id="switch">
+  <div class="sh-scrim" data-back></div>
+  <div class="sh-panel">
+    <i class="sh-grab"></i>
+    <p class="sw-tag"><span data-t="sw_save">Save 41%</span></p>
+    <h2 class="sh-h" data-t="sw_h">Annual is $5.00 a month</h2>
+    <p class="sh-sub2" data-t="sw_sub">Same Unlimited, 41% less than paying $8.49 every month, and your first 7 days are free.</p>
+    <div class="sw-rows">
+      <div class="sw-row"><span data-t="sw_r1">Unlimited monthly</span><b data-t="sw_r1p">$101.88 a year</b></div>
+      <div class="sw-row sw-on"><span data-t="sw_r2">Unlimited annual</span><b data-t="sw_r2p">$59.99 a year</b></div>
+    </div>
+    <button class="pw-cta sw-yes" data-pick="plan:yr" data-advance="confirm"><span data-t="sw_yes">Switch to annual, 7 days free</span></button>
+    <button class="sh-link sw-no" data-go="confirm"><span data-t="sw_no">Keep monthly</span></button>
+  </div>
+</section>
+
+<section class="scr sheet" data-id="confirm">
+  <div class="sh-scrim" data-back></div>
+  <div class="sh-panel">
+    <i class="sh-grab"></i>
+    <h2 class="sh-h" data-t="cf_h">Confirm your plan</h2>
+    <div data-show="plan:yr">
+      <p class="sh-sub"><span data-t="cf_name">Unlimited</span><span class="pc-tag" data-t="pw_tag2">7 days for free</span></p>
+      <ol class="tl">
+        <li><i class="tl-dot on">✓</i><div><b data-t="tl1_h">Today</b><span data-t="tl1">Unlimited listening and reading, free</span></div></li>
+        <li><i class="tl-dot">5</i><div><b data-t="tl2_h">Day 5</b><span data-t="tl2">We remind you that your free week ends in 2 days</span></div></li>
+        <li><i class="tl-dot">7</i><div><b data-t="tl3_h">Day 7</b><span data-t="tl3">Unlimited annual starts at $59.99/year. Cancel before, pay nothing.</span></div></li>
+      </ol>
+      <p class="sh-fine" data-t="cf_fine_yr">Once the free trial ends, the subscription automatically renews at $59.99 every year until you cancel.</p>
+    </div>
+    <div data-show="plan:mo">
+      <p class="sh-sub"><span data-t="cf_mo_name">Unlimited monthly</span></p>
+      <p class="sh-mo" data-t="cf_mo_line">$8.49/month, starting today</p>
+      <p class="sh-fine" data-t="cf_fine_mo">The subscription automatically renews at $8.49 every month until you cancel.</p>
+    </div>
+    <button class="pw-cta" data-apple><span data-show="plan:yr"><span data-t="cf_cta_yr">Start my free week</span></span><span data-show="plan:mo"><span data-t="cf_cta_mo">Subscribe for $8.49/month</span></span></button>
+    <p class="sh-legal" data-t="cf_legal">By continuing you agree to our <u>Terms of use</u>.</p>
+    <p class="apnote" data-t="apple_note">The App Store purchase sheet opens here.</p>
+  </div>
+</section>
+
+<section class="scr sheet" data-id="offer">
+  <div class="sh-scrim" data-back></div>
+  <div class="sh-panel">
+    <i class="sh-grab"></i>
+    <button class="sh-x" data-back aria-label="Close">✕</button>
+    <h2 class="sh-h" data-t="of_h">Not ready for a whole year?</h2>
+    <p class="sh-sub2" data-t="of_sub">Pick what suits you. Both are Unlimited.</p>
+    <button class="ocard" data-pick="plan:mo">
+      <span class="oc-l"><b data-t="of_mo_h">Unlimited monthly</b><span class="pc-sm" data-t="of_mo_p">$8.49/month</span><small data-t="of_mo_s">No yearly commitment. Cancel anytime in your profile.</small></span>
+      <i class="radio"></i>
+    </button>
+    <button class="ocard" data-pick="plan:yr">
+      <span class="oc-l"><b data-t="of_yr_h">Try it free first</b><span class="pc-tag" data-t="pw_tag3">7 days for free</span><small data-t="of_yr_s">We remind you 2 days before it ends. Then $59.99/year.</small></span>
+      <i class="radio"></i>
+    </button>
+    <button class="pw-cta of-cta" data-apple><span data-show="plan:mo"><span data-t="of_cta_mo">Continue with $8.49/month</span></span><span data-show="plan:yr"><span data-t="of_cta_yr">Start my free week</span></span></button>
+    <button class="sh-link" data-back><span data-t="of_no">Not now</span></button>
+    <p class="apnote" data-t="apple_note2">The App Store purchase sheet opens here.</p>
+  </div>
+</section>
+
+<section class="scr" data-id="today" data-aside>
+  <button class="td-x" aria-label="Close">✕</button>
+  <div class="td-body">
+    <h1 class="td-h">Subscribe now and step into a world of stories</h1>
+    <p class="td-sub">Don't worry – it's easy to cancel anytime in your profile</p>
+    <div class="td-card">
+      <div class="td-top">
+        <div class="td-row"><b>Unlimited</b><span>from $8.49/month</span></div>
+        <span class="td-spec">Special offers</span>
+        <h4>Historias para cualquier ocasión</h4>
+        <p>Escucha y lectura ilimitada de miles de historias</p>
+      </div>
+      <div class="td-foot">Try now ›</div>
+    </div>
+    <h3 class="td-alw">Always with Storytel</h3>
+    <ul class="td-list">
+      <li>Thousands of stories</li>
+      <li>Download and enjoy stories offline</li>
+      <li>Exclusive titles + Storytel Originals</li>
+      <li>Child-safe environment (Kids mode)</li>
+      <li>Cancel anytime</li>
+    </ul>
+  </div>
+</section>
+<!-- SCREENS:END -->
+
+      </div></div>
+      <div class="au-pn" id="panel" aria-live="polite"></div>
+    </div>
+    <p class="au-hint">Close the paywall with ✕ to see idea 5.</p>
+    <!-- shown when CONTENT.liveUrl is set: assets/qr-app.png = qr.swift "<liveUrl>?app" -->
+    <div class="au-qr" id="qrCard" hidden><img src="assets/qr-app.png" alt="QR code that opens the prototype full screen"><div><b>Try it on your phone</b><p>Scan to open the prototype full screen, the way a new user would see it.</p></div></div>
+    <div class="au-mobw" id="qrMob" hidden><a class="au-btn" href="?app">Open it full screen</a></div>
+  </div>
+</section>
+
+<!-- the paywall TODAY vs PROPOSED — built from CONTENT.compare (stills: assets/hero/<today>.png, <proposed>.png) -->
+<section class="au-sec" id="compare" hidden><div class="au-wrap" id="cmpBody"></div></section>
+
+<footer class="au-foot" id="sources">
+  <div class="au-wrap">
+    <details id="srcDetails">
+      <summary>Where the numbers come from</summary>
+      <div class="au-srcs" id="srcBody"></div>
+    </details>
+    <p class="au-fine" id="fine"></p>
+    <div class="au-cta-line">
+      <p>Every screen here can be built and A/B tested in Adapty’s Flow Builder, with no app release.</p>
+      <a class="au-btn" href="https://adapty.io/flow-paywall-builder/" target="_blank" rel="noopener">About Flow Builder</a>
+    </div>
+  </div>
+</footer>
+
+<!-- extras: video dialog (CONTENT.video), ?app bar, ?tour overlay (CONTENT.tour) -->
+<dialog class="au-vid" id="vid" aria-label="Walkthrough video">
+  <div class="au-vid-in"><video id="vidEl" controls muted playsinline preload="none"></video></div>
+  <div class="au-vid-bar"><a id="vidDl" download>Download the MP4</a><button type="button" class="au-vid-x" id="vidX">Close</button></div>
+</dialog>
+<div class="au-scrim" id="abScrim"></div>
+<div class="au-appbar" id="appbar">
+  <button type="button" class="au-ab-why" id="abWhy"><i></i><span id="abT"></span><em>Why ↑</em></button>
+  <div class="au-lsw" id="abLang" role="group" aria-label="Language"></div>
+</div>
+<div class="au-tour" aria-hidden="true">
+  <div class="au-tb"><img src="assets/brand/appstore-icon.jpg" alt="">Growth Audit <small>· Storytel</small></div>
+  <div class="au-tby">Prepared by Adapty</div>
+  <div class="au-tcap" id="tCap"></div>
+  <div class="au-ttap" id="tTap"></div>
+  <div class="au-tprog"><i id="tProg"></i></div>
+  <div class="au-tintro" id="tIntro"></div>
+  <div class="au-tend" id="tEnd"></div>
+</div>
+
+<!-- CONTENT — all the audit's words and numbers, as data. Schema (brand-check enforces it):
+     ideas  : 3–5 rows, ranked (the audit is five ideas, never fifteen). screen = the screen that shows it.
+     panel  : one entry per screen. idea = its number in ideas (1-based) or 0 for a context screen.
+              why on an idea screen reads "<b>Try</b> X, <b>because</b> Y." in ≤ 45 words; iv = its range.
+              why on a context screen is one line saying what it sets up.
+     hero   : three screen ids shown as stills in the hero — run hero-stills.sh after the screens are done.
+     outcome: combined "up to" numbers, PS-deck style, never above the ceiling of the per-idea ranges.
+     sources: public facts only — App Store, their site, their screens. No sales research on this page.
+     EXTRAS (each one hides itself when left empty):
+     langs  : [{"code":"en","name":"English"},{"code":"es","name":"Español · Spain prices"}] — first = the markup's language
+     i18n   : {"es": {"<data-t key>": "text with {tokens}"}} — every data-t key, for every language after the first
+     prices : {"es": {"yr": "39,99 €", …}} — {tokens} in i18n strings; that storefront's real IAP prices
+     labelsI18n: {"es": {"goal": {"a": "…"}}} — C.labels per language (data-bind="label:…")
+     liveUrl: final Pages URL (QR card + video end card); the QR file encodes liveUrl + "?app"
+     video / poster: "assets/walkthrough.mp4" / "assets/walkthrough-poster.jpg" (record-video.sh)
+     compare: {today, proposed, kicker, title, sub, todayCap, rows:[{h, idea, was, now}], kept} — today = a data-aside screen
+     tour   : {segments:[{id, d, st, tap:[selector-in-screen, ms], pop, reveal, end}], captions:{id:{n|k, t, l, o, ol}},
+              introLede, endTitle} — ~30 s total; the last segment has end:true (the end card) -->
+<script type="application/json" id="content">
+{
+ "app": "Storytel",
+ "state": {
+  "langs": [
+   "es",
+   "en"
+  ],
+  "plan": "yr"
+ },
+ "labels": {},
+ "chips": {
+  "welcome": "Welcome",
+  "langs": "Languages",
+  "paywall": "Paywall",
+  "switch": "Switch",
+  "confirm": "Free week",
+  "offer": "On close"
+ },
+ "hero": [
+  "welcome",
+  "paywall",
+  "confirm"
+ ],
+ "outcome": {
+  "cr": "+15%",
+  "arpu": "+15%"
+ },
+ "ideas": [
+  {
+   "screen": "paywall",
+   "title": "One paywall screen, not three",
+   "what": "Today “Try now” opens a period picker, then a “Confirm your plan” page with a terms checkbox, and only then the App Store sheet. Put both Unlimited plans, the free week and the button on the first screen.",
+   "impact": "+10–15%",
+   "il": "CR to trial start"
+  },
+  {
+   "screen": "confirm",
+   "title": "Explain the free week before they commit",
+   "what": "Your 7-day trial shows only as a small tag on step two. Swap the checkbox page for a light sheet that reads as a timeline: free today, a reminder on day 5, $59.99 a year from day 7.",
+   "impact": "+5–10%",
+   "il": "CR to trial start"
+  },
+  {
+   "screen": "switch",
+   "title": "Make annual the easy yes",
+   "what": "In the recording, monthly sits selected and annual reads “$59.99/year”. Open on annual at $5.00 a month, and when someone still picks monthly, offer one tap to switch: same Unlimited, 41% less, 7 days free.",
+   "impact": "+10–15%",
+   "il": "ARPU"
+  },
+  {
+   "screen": "langs",
+   "title": "Use the languages they just picked",
+   "what": "One screen before the paywall, people tick Spanish and English. Name those languages in the paywall headline, next to your 4.7 stars from 11K ratings, which no paywall screen shows today.",
+   "impact": "+5–10%",
+   "il": "CR to trial start"
+  },
+  {
+   "screen": "offer",
+   "title": "Catch the people who close",
+   "what": "Today ✕ simply closes. Answer the two reasons people leave: “not a whole year” gets Unlimited monthly at $8.49, “not sure yet” gets the free week with a reminder before day 7.",
+   "impact": "+3–8%",
+   "il": "CR, recovered from closers"
+  }
+ ],
+ "panel": {
+  "welcome": {
+   "idea": 0,
+   "t": "Your first screen, as it is",
+   "why": "Kept word for word. Your account, e-mail and consent screens come next and stay as they are, so the prototype skips to the languages screen."
+  },
+  "langs": {
+   "idea": 4,
+   "t": "Use the languages they just picked",
+   "why": "<b>Try</b> naming the languages ticked here in the paywall headline, next to your 4.7 stars, <b>because</b> it is the only answer you collect before the price, and a paywall that repeats it reads as their library.",
+   "iv": "CR +5–10%",
+   "il": "to trial start",
+   "also": "Tick or untick a language, then Continue: the paywall headline follows."
+  },
+  "paywall": {
+   "idea": 1,
+   "t": "One paywall screen, not three",
+   "why": "<b>Try</b> both Unlimited plans, the free week and the button on one screen, <b>because</b> today a card, a period picker and a checkbox page sit between “Try now” and the App Store sheet, and each tap loses people who already decided.",
+   "iv": "CR +10–15%",
+   "il": "to trial start",
+   "also": "Annual opens selected at $5.00 a month (idea 3). Pick monthly and continue to see the switch, or close with ✕ for idea 5."
+  },
+  "switch": {
+   "idea": 3,
+   "t": "Make annual the easy yes",
+   "why": "<b>Try</b> a one-tap switch when someone picks monthly (annual is $5.00 a month, 41% less, with 7 free days first), <b>because</b> many choose monthly before doing the maths, and $59.99/year reads bigger than $8.49.",
+   "iv": "ARPU +10–15%",
+   "il": "from a bigger annual share",
+   "also": "The yearly totals are your two prices: 12 × $8.49 = $101.88 against $59.99."
+  },
+  "confirm": {
+   "idea": 2,
+   "t": "Explain the free week before they commit",
+   "why": "<b>Try</b> a light sheet that shows the trial as a timeline (free today, reminder on day 5, $59.99 a year from day 7), <b>because</b> fear of being charged stops trials, and today the 7 days hide in a small tag.",
+   "iv": "CR +5–10%",
+   "il": "to trial start",
+   "also": "It replaces the “I agree” checkbox with one line of terms. Your own renewal sentence stays."
+  },
+  "offer": {
+   "idea": 5,
+   "t": "Catch the people who close",
+   "why": "<b>Try</b> a sheet when the paywall closes, with Unlimited monthly at $8.49 or the free week with a reminder, <b>because</b> today ✕ just closes, and most subscriptions start on the first day or never.",
+   "iv": "CR +3–8%",
+   "il": "recovered from people who close",
+   "also": "Both options are SKUs you already sell. No discount, no timer."
+  },
+  "today": {
+   "idea": 0,
+   "t": "Your paywall today",
+   "why": "The first of your three paywall screens, rebuilt word for word."
+  }
+ },
+ "langs": [
+  {
+   "code": "en",
+   "name": "English"
+  },
+  {
+   "code": "es",
+   "name": "Español · Mexico prices"
+  }
+ ],
+ "i18n": {
+  "es": {
+   "wl_h": "Audiolibros<br>para todos",
+   "wl_sub": "<b>800 000+</b> historias best seller y Originals.<br>Cancela cuando quieras.",
+   "wl_cta": "Crear cuenta",
+   "wl_login": "Iniciar sesión",
+   "lg_h": "Selecciona tus idiomas",
+   "lg_sub": "Descubre historias en tus idiomas, únicas para cada dispositivo. Puedes cambiarlo cuando quieras en ajustes.",
+   "l_es": "Español",
+   "l_en": "Inglés",
+   "l_pt": "Portugués",
+   "l_fr": "Francés",
+   "l_it": "Italiano",
+   "l_de": "Alemán",
+   "l_ru": "Ruso",
+   "cta_cont": "Continuar",
+   "pw_h": "Historias en <span data-langs></span>, gratis por 7 días",
+   "pw_proof": "{rate} · {count} calificaciones en el App Store",
+   "pw_save": "Ahorra 41%",
+   "pw_yr_name": "Ilimitado anual",
+   "pw_tag": "7 días gratis",
+   "pw_tag2": "7 días gratis",
+   "pw_tag3": "7 días gratis",
+   "pw_yr_price": "{yr}/año · <b>{pm}/mes</b>",
+   "pw_mo_name": "Ilimitado mensual",
+   "pw_mo_price": "{mo}/mes",
+   "pw_b1": "800 000+ historias y Storytel Originals",
+   "pw_b2": "Descarga y disfruta historias sin conexión",
+   "pw_b3": "Entorno seguro para niños (modo Kids)",
+   "pw_cta_yr": "Empezar mis 7 días gratis",
+   "pw_cta_mo": "Continuar con el plan mensual",
+   "pw_fine_yr": "7 días gratis, luego {yr}/año. Cancela cuando quieras en tu perfil.",
+   "pw_fine_mo": "{mo}/mes. Cancela cuando quieras en tu perfil.",
+   "lg_terms": "Términos de uso",
+   "lg_priv": "Privacidad",
+   "lg_rest": "Restaurar",
+   "cf_h": "Confirma tu plan",
+   "cf_name": "Ilimitado",
+   "tl1_h": "Hoy",
+   "tl1": "Escucha y lectura ilimitadas, gratis",
+   "tl2_h": "Día 5",
+   "tl2": "Te avisamos que tu semana gratis termina en 2 días",
+   "tl3_h": "Día 7",
+   "tl3": "Empieza Ilimitado anual: {yr}/año. Cancela antes y no pagas nada.",
+   "cf_fine_yr": "Cuando termine la prueba gratis, la suscripción se renueva automáticamente a {yr} cada año hasta que la canceles.",
+   "cf_mo_name": "Ilimitado mensual",
+   "cf_mo_line": "{mo}/mes, desde hoy",
+   "cf_fine_mo": "La suscripción se renueva automáticamente a {mo} cada mes hasta que la canceles.",
+   "cf_cta_yr": "Empezar mi semana gratis",
+   "cf_cta_mo": "Suscribirme por {mo}/mes",
+   "cf_legal": "Al continuar aceptas los <u>Términos de uso</u>.",
+   "apple_note": "Aquí se abre la hoja de compra del App Store.",
+   "apple_note2": "Aquí se abre la hoja de compra del App Store.",
+   "of_h": "¿Aún no quieres un año completo?",
+   "of_sub": "Elige lo que te acomode. Los dos son Ilimitado.",
+   "of_mo_h": "Ilimitado mensual",
+   "of_mo_p": "{mo}/mes",
+   "of_mo_s": "Sin compromiso anual. Cancela cuando quieras en tu perfil.",
+   "of_yr_h": "Pruébalo gratis primero",
+   "of_yr_s": "Te avisamos 2 días antes de que termine. Luego {yr}/año.",
+   "of_cta_mo": "Continuar con {mo}/mes",
+   "of_cta_yr": "Empezar mi semana gratis",
+   "of_no": "Ahora no",
+   "sw_save": "Ahorra 41%",
+   "sw_h": "Anual son {pm} al mes",
+   "sw_sub": "El mismo Ilimitado, 41% menos que pagar {mo} cada mes, y tus primeros 7 días son gratis.",
+   "sw_r1": "Ilimitado mensual",
+   "sw_r1p": "{mo12} al año",
+   "sw_r2": "Ilimitado anual",
+   "sw_r2p": "{yr} al año",
+   "sw_yes": "Cambiar a anual, 7 días gratis",
+   "sw_no": "Seguir con mensual",
+   "pw_b4": "Cancela cuando quieras"
+  }
+ },
+ "prices": {
+  "es": {
+   "mo": "$169.00",
+   "yr": "$1,190.00",
+   "pm": "$99.17",
+   "rate": "4.8",
+   "count": "22 mil",
+   "mo12": "$2,028.00"
+  }
+ },
+ "labelsI18n": {},
+ "liveUrl": "https://eddieatadapty.github.io/storytel-flow-rebuild/",
+ "video": "assets/walkthrough.mp4",
+ "poster": "assets/walkthrough-poster.jpg",
+ "compare": {
+  "today": "today",
+  "proposed": "paywall",
+  "kicker": "The paywall, side by side",
+  "title": "Today and proposed.",
+  "sub": "Same white screen, same Unlimited plans, same prices. One screen instead of three.",
+  "todayCap": "rebuilt from your live iOS paywall, first of three screens",
+  "rows": [
+   {
+    "h": "Steps to the App Store sheet",
+    "idea": 1,
+    "was": "Three: the “Try now” card, a period picker, then “Confirm your plan” with an “I agree” checkbox",
+    "now": "One paywall, then a light confirm sheet with no checkbox"
+   },
+   {
+    "h": "Free trial",
+    "idea": 2,
+    "was": "A small “7 days for free” tag on the second screen",
+    "now": "In the headline and the button, plus a day-by-day timeline with a reminder"
+   },
+   {
+    "h": "Price",
+    "idea": 3,
+    "was": "“from $8.49/month”; annual appears on the next screen, with monthly selected",
+    "now": "Annual selected at $5.00/month with your “Save 41%” tag; picking monthly offers a one-tap switch"
+   },
+   {
+    "h": "Headline and proof",
+    "idea": 4,
+    "was": "“Subscribe now and step into a world of stories”, no rating",
+    "now": "“Stories in Spanish and English, free for 7 days”, with ★ 4.7 · 11K ratings"
+   },
+   {
+    "h": "On close",
+    "idea": 5,
+    "was": "✕ closes the paywall",
+    "now": "A sheet: Unlimited monthly at $8.49, or the free week with a reminder"
+   }
+  ],
+  "kept": "Kept: your white layout, the black pill button, orange selection, the Unlimited plan names, the blue “7 days for free” tag, the black “Save 41%” tag, your benefit lines, your renewal sentence and both prices."
+ },
+ "tour": {
+  "introLede": "Five ideas for your paywall, built into your own screens.",
+  "endTitle": "Five ideas, built into your own paywall.",
+  "segments": [
+   {
+    "id": "welcome",
+    "d": 3200,
+    "tap": [
+     ".wl-cta",
+     2700
+    ]
+   },
+   {
+    "id": "langs",
+    "d": 2400,
+    "st": {
+     "langs": [
+      "es",
+      "en"
+     ]
+    }
+   },
+   {
+    "id": "langs",
+    "d": 1500,
+    "st": {
+     "langs": [
+      "es",
+      "en",
+      "fr"
+     ]
+    },
+    "tap": [
+     "[data-toggle=\"langs:fr\"]",
+     150
+    ]
+   },
+   {
+    "id": "langs",
+    "d": 1100,
+    "tap": [
+     ".bk-cta",
+     550
+    ]
+   },
+   {
+    "id": "paywall",
+    "d": 3400,
+    "st": {
+     "plan": "yr"
+    },
+    "pop": ".pw-h"
+   },
+   {
+    "id": "paywall",
+    "d": 1800,
+    "st": {
+     "plan": "mo"
+    },
+    "tap": [
+     "[data-pick=\"plan:mo\"]",
+     150
+    ]
+   },
+   {
+    "id": "paywall",
+    "d": 1100,
+    "tap": [
+     ".pw-cta-mo",
+     550
+    ]
+   },
+   {
+    "id": "switch",
+    "d": 3300,
+    "st": {
+     "plan": "mo"
+    },
+    "tap": [
+     ".sw-yes",
+     2700
+    ]
+   },
+   {
+    "id": "confirm",
+    "d": 3600,
+    "st": {
+     "plan": "yr"
+    },
+    "reveal": ".tl"
+   },
+   {
+    "id": "offer",
+    "d": 3200,
+    "st": {
+     "plan": "mo"
+    }
+   },
+   {
+    "id": "offer",
+    "d": 1800,
+    "st": {
+     "plan": "mo"
+    },
+    "tap": [
+     ".of-cta",
+     900
+    ]
+   },
+   {
+    "id": "offer",
+    "d": 3400,
+    "end": true
+   }
+  ],
+  "captions": {
+   "welcome": {
+    "k": "Context",
+    "t": "Your first screen, as it is",
+    "l": "Kept word for word. Account screens follow, unchanged."
+   },
+   "langs": {
+    "n": 4,
+    "t": "Use the languages they pick",
+    "l": "What they tick here, the paywall headline names.",
+    "o": "CR +5–10%",
+    "ol": "to trial start"
+   },
+   "paywall": {
+    "n": 1,
+    "t": "One paywall screen, not three",
+    "l": "Plans, free week and button together, annual first.",
+    "o": "CR +10–15%",
+    "ol": "to trial start"
+   },
+   "confirm": {
+    "n": 2,
+    "t": "Explain the free week",
+    "l": "Free today, a reminder on day 5, $59.99 a year from day 7.",
+    "o": "CR +5–10%",
+    "ol": "to trial start"
+   },
+   "offer": {
+    "n": 5,
+    "t": "Catch the people who close",
+    "l": "Monthly at $8.49, or the free week with a reminder.",
+    "o": "CR +3–8%",
+    "ol": "recovered from closers"
+   },
+   "switch": {
+    "n": 3,
+    "t": "Make annual the easy yes",
+    "l": "Picked monthly? One tap to annual: $5.00 a month, 7 days free.",
+    "o": "ARPU +10–15%",
+    "ol": "from a bigger annual share"
+   }
+  }
+ },
+ "grounding": "Impact ranges are Adapty’s expected effect from teardowns and A/B tests across 30,000+ subscription apps, not measured lift for Storytel. They overlap, so they don’t add up.",
+ "sources": [
+  {
+   "group": "Prices",
+   "items": [
+    {
+     "dt": "$8.49 a month · Unlimited monthly",
+     "dd": "Your live iOS paywall as recorded by ScreensDesign (US App Store account, Mexico chosen as country), and the <a href=\"https://apps.apple.com/us/app/storytel-audiobooks-library/id348177651\" target=\"_blank\" rel=\"noopener\">US App Store</a> In-App Purchases list: “Storytel Unlimited (Mexico)” $8.49."
+    },
+    {
+     "dt": "$59.99 a year · Unlimited annual, 7 days free",
+     "dd": "The period picker and the App Store purchase sheet in the same recording: “Storytel Unlimited 1Y (Mexico)”, 1-week free trial, then $59.99 per year. The US listing’s top-10 IAP list doesn’t show this SKU; the <a href=\"https://apps.apple.com/mx/app/storytel-audiolibros-y-ebooks/id348177651\" target=\"_blank\" rel=\"noopener\">Mexico listing</a> does ($1,190.00)."
+    },
+    {
+     "dt": "$5.00 a month · Save 41%",
+     "dd": "Computed: $59.99 ÷ 12; $59.99 against 12 × $8.49 = $101.88. Your own period picker says “Save 41%”."
+    },
+    {
+     "dt": "$169.00 · $1,190.00 (Spanish version)",
+     "dd": "Mexico App Store In-App Purchases: “Storytel Ilimitado (México)” $169.00 and “Storytel Unlimited 1Y (Mexico)” $1,190.00. $99.17 a month and the 41% saving are computed from them."
+    },
+    {
+     "dt": "Not used",
+     "dd": "The other market SKUs in your IAP lists (Unlimited for Spain, Turkey, Poland, India, UAE, Colombia, Egypt, Saudi Arabia, Italy, Thailand, Germany and Denmark; Storytel Basic (Germany), Storytel Premium (Denmark), Storytel Select $1.49). Sweden’s Flex, Premium, Unlimited and Family plans are sold on <a href=\"https://www.storytel.com/se/subscriptions\" target=\"_blank\" rel=\"noopener\">storytel.com</a> and don’t appear in the Swedish App Store IAP list, so the prototype doesn’t show Swedish prices."
+    }
+   ]
+  },
+  {
+   "group": "Proof",
+   "items": [
+    {
+     "dt": "★ 4.7 · 11K ratings",
+     "dd": "US App Store listing, the storefront of the recorded flow: 4.73 from 11,257 ratings."
+    },
+    {
+     "dt": "★ 4.8 · 22 mil (Spanish)",
+     "dd": "Mexico App Store listing: 4.77 from 22,649 ratings."
+    }
+   ]
+  },
+  {
+   "group": "Features and copy",
+   "items": [
+    {
+     "dt": "Welcome, languages and paywall copy",
+     "dd": "Your live iOS flow as recorded by ScreensDesign: “Audiobooks for everyone”, “Select your languages”, “Subscribe now and step into a world of stories”, the period picker and “Confirm your plan”. Kept word for word where a screen is kept."
+    },
+    {
+     "dt": "“800 000+ best-selling stories and Originals”",
+     "dd": "Your welcome screen. The benefit lines on the proposed paywall are from your “Always with Storytel” list."
+    },
+    {
+     "dt": "Spanish copy",
+     "dd": "“Ilimitado anual / mensual”, “Paga una vez al año / mes” and “Términos de uso” appear in your recorded paywall. The rest of the Spanish is our translation, not yours."
+    },
+    {
+     "dt": "Day-5 reminder",
+     "dd": "Proposed, not seen in your flow: it needs a push or an e-mail you would set up."
+    }
+   ]
+  },
+  {
+   "group": "Design",
+   "items": [
+    {
+     "dt": "Colours",
+     "dd": "#101010, #ff501c, #e8e8e8 and #5c5c5c from storytel.com’s design tokens; #ff3801 (selection), #dbeefe (trial tag) and #efedf0 (card footer) sampled from your paywall screens."
+    },
+    {
+     "dt": "Type",
+     "dd": "Your apps use Storytel Euclid, which is licensed. The prototype uses DM Sans, the closest Google family."
+    },
+    {
+     "dt": "Book covers",
+     "dd": "Cut from your own welcome screen in the recording."
+    }
+   ]
+  },
+  {
+   "group": "What we couldn’t see",
+   "items": [
+    {
+     "dt": "Which plan opens selected",
+     "dd": "In the recording, monthly is selected on the period picker. We can’t tell whether that is the default or the tester’s tap."
+    },
+    {
+     "dt": "What ✕ leads to",
+     "dd": "The recorded user bought the plan, so we didn’t see what happens after a close."
+    },
+    {
+     "dt": "Markets and test history",
+     "dd": "We don’t know which countries get this in-app paywall, or what you have already tested on it."
+    }
+   ]
+  }
+ ]
+}
+</script>
+
+<script>
+/* Storytel hooks: the paywall headline names the languages ticked on the languages screen (in the prototype's language),
+   the status bar turns white over dark art, the offer sheet opens on monthly, and buyer buttons say where Apple's sheet opens. */
+(function(){
+  var ORDER_L = ['es', 'en', 'pt', 'fr', 'it', 'de', 'ru'];
+  var LN = {
+    en: {es: 'Spanish', en: 'English', pt: 'Portuguese', fr: 'French', it: 'Italian', de: 'German', ru: 'Russian'},
+    es: {es: 'español', en: 'inglés', pt: 'portugués', fr: 'francés', it: 'italiano', de: 'alemán', ru: 'ruso'}
+  };
+  function joinL(a, l){
+    var M = LN[l] || LN.en, n = ORDER_L.filter(function(k){ return (a || []).indexOf(k) > -1; }).map(function(k){ return M[k]; });
+    if (!n.length) return l === 'es' ? 'tus idiomas' : 'your languages';
+    if (n.length === 1) return n[0];
+    var last = n.pop(), and = l === 'es' ? (/^h?i/i.test(last) ? ' e ' : ' y ') : ' and ';
+    return n.join(', ') + and + last;
+  }
+  var LIGHT_BAR = {welcome: 1, paywall: 1, 'switch': 1, confirm: 1, offer: 1};
+  var prev = null;
+  window.onSync = function(S){
+    document.querySelectorAll('[data-langs]').forEach(function(el){ el.textContent = joinL(S.langs, S.lang); });
+    var sb = document.querySelector('.sbar'); if (sb) sb.style.color = LIGHT_BAR[cur] ? 'white' : '';
+  };
+  window.onEnter = function(id, S){
+    document.querySelectorAll('.sh-panel.done').forEach(function(p){ p.classList.remove('done'); });
+    if (id === 'offer' || id === 'switch') S.plan = 'mo';
+    if (id === 'confirm' && scr['switch']) scr['switch'].classList.remove('under');
+    if (id === 'confirm' && prev !== 'switch') S.plan = 'yr';
+    if (id === 'paywall' && prev !== 'confirm' && prev !== 'switch') S.plan = 'yr';
+    prev = id; sync();
+  };
+  document.addEventListener('click', function(e){
+    var b = e.target.closest('[data-apple]'); if (!b) return;
+    var p = b.closest('.sh-panel'); if (p) p.classList.add('done');
+  });
+})();
+</script>
+<script>
+/* ============ engine — generic, do not fork per app ============ */
+var C = JSON.parse(document.getElementById('content').textContent);
+var S = C.state, scr = {}, ORDER = [], hist = [], cur = null, Q = location.search;
+var SHOT = /[?&](shot|phone|tour)\b/.test(Q), HERO = /[?&]hero\b/.test(Q);
+/* a screen with data-aside (e.g. the paywall TODAY for the side-by-side) renders for stills but is not part of the flow */
+document.querySelectorAll('.scr').forEach(function(s){ scr[s.dataset.id] = s; if (!s.hasAttribute('data-aside')) ORDER.push(s.dataset.id); });
+if (/[?&]shot\b/.test(Q)) document.documentElement.classList.add('shot');
+if (/[?&]phone\b/.test(Q)) document.documentElement.classList.add('shot', 'phoneonly');
+if (/[?&]clear\b/.test(Q)) document.documentElement.classList.add('clear');
+var IDEAS = (C.ideas || []).length;
+
+/* ---- languages: markup is the first language; C.i18n[lang][data-t key] the others; {tokens} from C.prices[lang] ---- */
+var LANGS = C.langs || [], BASE = LANGS.length ? LANGS[0].code : 'en', LANG_DONE = BASE, BASE_LABELS = JSON.parse(JSON.stringify(C.labels || {}));
+if (!S.lang) S.lang = BASE;
+function fillP(s, l){ var P = (C.prices || {})[l] || {}; return String(s).replace(/\{(\w+)\}/g, function(m, k){ return k in P ? P[k] : m; }); }
+function applyLang(){
+  var l = S.lang || BASE; if (l === LANG_DONE) return;
+  var T = (C.i18n || {})[l] || {};
+  document.querySelectorAll('.phone [data-t]').forEach(function(el){
+    if (el._base == null) el._base = el.innerHTML;
+    el.innerHTML = l === BASE || T[el.dataset.t] == null ? el._base : fillP(T[el.dataset.t], l);
+  });
+  C.labels = JSON.parse(JSON.stringify(BASE_LABELS));
+  var LL = (C.labelsI18n || {})[l] || {}; Object.keys(LL).forEach(function(k){ C.labels[k] = LL[k]; });
+  LANG_DONE = l;
+}
+function setLang(l){
+  if (!LANGS.some(function(x){ return x.code === l; })) return;
+  S.lang = l; sync();
+  document.querySelectorAll('[data-setlang]').forEach(function(b){ b.classList.toggle('on', b.dataset.setlang === l); });
+  if (window.onLang) window.onLang(l);
+}
+
+function lab(key){ var v = S[key]; var L = C.labels[key]; if (Array.isArray(v)) return v.map(function(x){ return L && L[x] || x; }).join(', '); return (L && L[v]) || v; }
+function sync(){
+  applyLang();
+  document.querySelectorAll('[data-bind]').forEach(function(el){
+    var b = el.dataset.bind, m = b.split(':');
+    el.textContent = m[0] === 'label' ? lab(m[1]) : m[0] === 'count' ? (S[m[1]] || []).length : (S[b] == null ? '' : S[b]);
+  });
+  document.querySelectorAll('[data-pick]').forEach(function(el){ var p = el.dataset.pick.split(':'); el.classList.toggle('on', S[p[0]] === p[1]); });
+  document.querySelectorAll('[data-toggle]').forEach(function(el){ var p = el.dataset.toggle.split(':'); el.classList.toggle('on', (S[p[0]] || []).indexOf(p[1]) > -1); });
+  document.querySelectorAll('[data-requires]').forEach(function(el){ el.disabled = !(S[el.dataset.requires] || []).length; });
+  document.querySelectorAll('[data-show]').forEach(function(el){ var p = el.dataset.show.split(':'); el.style.display = String(S[p[0]]) === p[1] ? '' : 'none'; });
+  if (window.onSync) window.onSync(S);
+}
+function show(id, dir){
+  var from = scr[cur], to = scr[id]; if (!to || id === cur) return;
+  var sheet = to.classList.contains('sheet');
+  if (from){
+    from.classList.remove('is-active');
+    if (sheet) from.classList.add('under');                                   /* a sheet slides up over the screen that opened it */
+    else if (dir === 'fwd' && !from.classList.contains('sheet')) from.classList.add('is-past');
+  }
+  if (!sheet) Object.keys(scr).forEach(function(k){ var u = scr[k]; if (u !== to && u.classList.contains('under')) { u.classList.remove('under'); if (dir === 'fwd') u.classList.add('is-past'); } });
+  to.classList.remove('is-past', 'under'); to.classList.add('is-active'); cur = id;
+  paint(); if (window.onEnter) window.onEnter(id, S);
+}
+function go(id){ if (cur) hist.push(cur); show(id, 'fwd'); }
+function back(){ if (hist.length) { var p = hist.pop(); scr[cur].classList.remove('is-active'); show(p, 'back'); } }
+function jump(id){
+  Object.keys(scr).forEach(function(k){ scr[k].classList.add('nofx'); scr[k].classList.remove('is-active', 'is-past', 'under'); });
+  var i = ORDER.indexOf(id); hist = ORDER.slice(0, i < 0 ? 0 : i); cur = null;
+  ORDER.slice(0, i).forEach(function(k){ if (!scr[k].classList.contains('sheet')) scr[k].classList.add('is-past'); });
+  if (scr[id] && scr[id].classList.contains('sheet')) {                        /* jumping to a sheet: its opener stays visible under it */
+    for (var j = i - 1; j >= 0; j--) if (!scr[ORDER[j]].classList.contains('sheet')) { scr[ORDER[j]].classList.remove('is-past'); scr[ORDER[j]].classList.add('under'); break; }
+  }
+  show(id, 'jump');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ Object.keys(scr).forEach(function(k){ scr[k].classList.remove('nofx'); }); }); });
+}
+function stepBy(d){ var i = ORDER.indexOf(cur) + d; if (i >= 0 && i < ORDER.length) jump(ORDER[i]); }
+function jumpTo(id){
+  var p = document.getElementById('prototype');
+  if (p && !document.documentElement.classList.contains('appmode')) p.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+  jump(id);
+}
+function paint(){
+  sync();
+  var c = document.getElementById('chips');
+  if (!c.childElementCount) ORDER.forEach(function(id){
+    var p = C.panel[id] || {}, b = document.createElement('button');
+    b.className = 'au-chip'; b.type = 'button'; b.dataset.id = id; b.setAttribute('role', 'tab');
+    b.innerHTML = (p.idea ? '<i>' + p.idea + '</i>' : '') + ((C.chips && C.chips[id]) || id);
+    b.onclick = function(){ jump(id); };
+    c.appendChild(b);
+  });
+  c.querySelectorAll('.au-chip').forEach(function(b){ var on = b.dataset.id === cur; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  var d = C.panel[cur] || {t: cur, why: ''}, n = ORDER.indexOf(cur) + 1;
+  document.getElementById('panel').innerHTML =
+    (d.idea ? '<div class="au-pn-k"><i></i>Idea ' + d.idea + ' of ' + IDEAS + '</div>' : '<div class="au-pn-k au-ctx"><i></i>Context</div>') +
+    '<h3 class="au-pn-t">' + d.t + '</h3><p class="au-pn-h">' + d.why + '</p>' +
+    (d.iv ? '<div class="au-pn-o"><div class="au-lab">Potential outcome · based on Adapty data</div><div class="au-val"><mark>' + d.iv + '</mark></div><div class="au-sub">' + (d.il || '') + '</div></div>' : '') +
+    (d.also ? '<p class="au-pn-a">' + d.also + '</p>' : '') +
+    '<div class="au-pn-nav"><button type="button" onclick="stepBy(-1)"' + (n <= 1 ? ' disabled' : '') + '>‹ Previous</button><span>Screen ' + n + ' of ' + ORDER.length + '</span><button type="button" onclick="stepBy(1)"' + (n === ORDER.length ? ' disabled' : '') + '>Next ›</button></div>';
+  var ab = document.getElementById('abT'); if (ab) ab.textContent = (d.idea ? 'Idea ' + d.idea + ' of ' + IDEAS + ' · ' : '') + (d.t || '');
+}
+document.addEventListener('click', function(e){
+  var j = e.target.closest('[data-jumpto]'); if (j){ e.preventDefault(); jumpTo(j.dataset.jumpto); return; }
+  var L = e.target.closest('[data-setlang]'); if (L){ setLang(L.dataset.setlang); return; }
+  if (e.target.closest('[data-langtoggle]') && LANGS.length > 1){ var k = LANGS.findIndex(function(x){ return x.code === S.lang; }); setLang(LANGS[(k + 1) % LANGS.length].code); return; }
+  var el = e.target.closest('[data-go],[data-back],[data-pick],[data-toggle]'); if (!el) return;
+  if (el.dataset.pick){ var p = el.dataset.pick.split(':'); S[p[0]] = p[1]; sync(); if (el.dataset.advance) setTimeout(function(){ go(el.dataset.advance); }, 170); return; }
+  if (el.dataset.toggle){ var q = el.dataset.toggle.split(':'), a = S[q[0]] = S[q[0]] || [], i = a.indexOf(q[1]); if (i > -1) a.splice(i, 1); else a.push(q[1]); sync(); return; }
+  if ('back' in el.dataset) return back();
+  go(el.dataset.go);
+});
+document.querySelectorAll('[data-input]').forEach(function(inp){
+  inp.value = S[inp.dataset.input] || ''; inp.addEventListener('input', function(){ S[inp.dataset.input] = inp.value.trim() || 'there'; sync(); });
+});
+function $(id){ return document.getElementById(id); }
+
+/* hero stills, shortlist, outcome, sources — from CONTENT */
+$('heroPhones').innerHTML = (C.hero || []).map(function(id, i){
+  var pos = ['l', 'c', 'r'][i] || 'r', t = (C.chips && C.chips[id]) || id;
+  return '<button class="au-hp au-' + pos + '" data-jumpto="' + id + '" aria-label="Open ' + t + '"><img src="assets/hero/' + id + '.png" alt=""></button>';
+}).join('');
+$('ideaList').innerHTML = (C.ideas || []).map(function(r, i){
+  return '<article class="au-idea"><div class="au-num">0' + (i + 1) + '</div><div><h3>' + r.title + '</h3><p>' + r.what + '</p>' +
+    '<button type="button" class="au-lnk" data-jumpto="' + r.screen + '">See it on the screen</button></div>' +
+    '<div class="au-imp"><div class="au-v"><mark>' + r.impact + '</mark></div><div class="au-l">' + r.il + '</div></div></article>';
+}).join('');
+var O = C.outcome || {};
+$('bandNums').innerHTML =
+  (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') +
+  (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '');
+$('bandFn').textContent = C.grounding;
+$('fine').textContent = C.grounding + ' Prepared by Adapty.';
+$('srcBody').innerHTML = C.sources.map(function(g){
+  return '<div><h4>' + g.group + '</h4><dl>' + g.items.map(function(it){ return '<dt>' + it.dt + '</dt><dd>' + it.dd + '</dd>'; }).join('') + '</dl></div>';
+}).join('');
+function openSrc(){ var d = $('srcDetails'); d.open = true; d.scrollIntoView({block: 'start'}); }
+
+/* ---- extras: language control, the paywall side by side, QR / phone view, the video ---- */
+if (LANGS.length > 1) {
+  $('langRow').hidden = false;
+  var lb = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.name + '</button>'; }).join('');
+  $('langSw').innerHTML = lb;
+  $('abLang').innerHTML = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.code.toUpperCase() + '</button>'; }).join('');
+}
+var CM = C.compare;
+if (CM && scr[CM.today] && scr[CM.proposed]) {
+  $('compare').hidden = false; $('navCompare').hidden = false;
+  $('cmpBody').innerHTML = '<div class="au-ideas-h"><p class="au-kicker">' + (CM.kicker || 'The paywall, side by side') + '</p><h2 class="au-h2">' + (CM.title || 'Today and proposed.') + (CM.sub ? ' <span>' + CM.sub + '</span>' : '') + '</h2></div>' +
+    '<div class="au-cmp"><figure><img src="assets/hero/' + CM.today + '.png" alt="Your paywall today"><figcaption>Today <span>· ' + (CM.todayCap || 'rebuilt from your recording') + '</span></figcaption></figure>' +
+    '<ol class="au-chg">' + (CM.rows || []).map(function(r){
+      return '<li><h4>' + r.h + (r.idea ? ' <i>Idea ' + r.idea + '</i>' : '') + '</h4><span class="au-was"><em>Today</em>' + r.was + '</span><span class="au-now"><em>Proposed</em>' + r.now + '</span></li>';
+    }).join('') + '</ol>' +
+    '<figure><button type="button" class="au-cmp-go" data-jumpto="' + CM.proposed + '" aria-label="Open the proposed paywall"><img src="assets/hero/' + CM.proposed + '.png" alt="The proposed paywall"></button><figcaption>Proposed <span>· tap to try it</span></figcaption></figure></div>' +
+    (CM.kept ? '<p class="au-kept">' + CM.kept + '</p>' : '');
+}
+if (C.liveUrl) { $('qrCard').hidden = false; $('qrMob').hidden = false; }
+if (/[?&]app\b/.test(Q)) {
+  var H0 = document.documentElement; H0.classList.add('appmode');
+  var openP = function(o){ H0.classList.toggle('au-open', o); $('abWhy').querySelector('em').textContent = o ? 'Close ↓' : 'Why ↑'; };
+  $('abWhy').onclick = function(){ openP(!H0.classList.contains('au-open')); };
+  $('abScrim').onclick = function(){ openP(false); };
+}
+if (C.video) {
+  var dlg = $('vid'), vel = $('vidEl'); vel.src = C.video; if (C.poster) vel.poster = C.poster; $('vidDl').href = C.video;
+  $('heroVideo').hidden = false;
+  $('heroVideo').onclick = function(){ dlg.showModal(); vel.play().catch(function(){}); };
+  $('vidX').onclick = function(){ dlg.close(); };
+  dlg.addEventListener('close', function(){ vel.pause(); });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+}
+
+/* ---- ?tour: a deterministic walkthrough from C.tour — tourAt(ms) paints one frame; record-video.sh records it ---- */
+function tourInit(){
+  var T = C.tour, H = document.documentElement, TR = T.transition || 360;
+  H.classList.add('tourmode', 'shot'); document.body.classList.add('nofx');
+  var SEG = T.segments, START = [], STATE = [], UNDER = [], acc = 0, st = JSON.parse(JSON.stringify(C.state));
+  SEG.forEach(function(s, i){
+    START.push(acc); acc += s.d;
+    Object.keys(s.st || {}).forEach(function(k){ st[k] = s.st[k]; }); STATE.push(JSON.parse(JSON.stringify(st)));
+    var u = null; if (scr[s.id].classList.contains('sheet')) for (var j = i - 1; j >= 0; j--) if (!scr[SEG[j].id].classList.contains('sheet')) { u = SEG[j].id; break; }
+    UNDER.push(u);
+  });
+  var TOTAL = acc, capEl = $('tCap'), tap = $('tTap'), pressed = null, popped = [];
+  $('tIntro').innerHTML = '<p class="au-eyebrow"><i></i>' + document.querySelector('.au-top-hero .au-eyebrow').textContent + '</p><h1 class="au-display">' + C.app + '</h1>' +
+    '<p class="au-lede">' + (T.introLede || document.querySelector('.au-top-hero .au-lede').innerHTML) + '</p>';
+  $('tEnd').innerHTML = '<p class="au-eyebrow"><i></i>Growth Audit · ' + C.app + '</p><h2 class="au-te-h">' + (T.endTitle || 'Five ideas, built into your own onboarding.') + '</h2>' +
+    '<div class="au-te-n">' + (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') + (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '') + '</div>' +
+    (C.liveUrl ? '<div class="au-te-q"><img src="assets/qr-app.png" alt=""><div><b>Try it on your phone</b><span>' + C.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') + '</span></div></div>' : '') +
+    '<p class="au-te-f">' + C.grounding + '</p>';
+  function ease(x){ return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function easeBack(x){ var c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+  function capHTML(c){
+    c = c || {k: '', t: '', l: ''};
+    return '<div class="au-tk' + (c.n ? '' : ' au-ctx') + '"><i></i>' + (c.n ? 'Idea ' + c.n + ' of ' + IDEAS : (c.k || 'Context')) + '</div><h2 class="au-tt">' + c.t + '</h2><p class="au-tl">' + (c.l || '') + '</p>' +
+      (c.o ? '<div class="au-to"><small>Potential outcome · based on Adapty data</small><b><mark>' + c.o + '</mark></b><span>' + (c.ol || '') + '</span></div>' : '');
+  }
+  function place(id, tf, z){ scr[id].style.transform = tf; scr[id].style.zIndex = z; }
+  window.TOUR_MS = TOTAL;
+  window.tourAt = function(ms){
+    ms = Math.max(0, Math.min(TOTAL - 1, ms));
+    var i = 0; while (i < SEG.length - 1 && ms >= START[i + 1]) i++;
+    var s = SEG[i], local = ms - START[i], prev = i > 0 ? SEG[i - 1] : null;
+    Object.keys(STATE[i]).forEach(function(k){ S[k] = STATE[i][k]; }); sync();
+    var moving = prev && prev.id !== s.id && local < TR, p = moving ? ease(local / TR) : 1;
+    Object.keys(scr).forEach(function(k){ scr[k].classList.remove('is-active', 'is-past', 'under'); place(k, 'translateX(100%)', 0); });
+    var B = scr[s.id];
+    if (moving) {
+      if (B.classList.contains('sheet')) { place(prev.id, 'none', 1); B.style.transform = 'translateY(' + (1 - p) * 100 + '%)'; }
+      else {
+        var slide = 'translateX(' + (-28 * p) + '%)'; place(prev.id, slide, 1); B.style.transform = 'translateX(' + (1 - p) * 100 + '%)';
+        if (UNDER[i - 1]) place(UNDER[i - 1], slide, 0);
+      }
+    } else B.style.transform = 'none';
+    B.style.zIndex = 2;
+    if (UNDER[i] && !moving) place(UNDER[i], 'none', 1);
+    /* optional reveal: s.pop scales an element in, s.reveal fades one in a beat later */
+    popped.forEach(function(e){ e.style.transform = ''; e.style.opacity = ''; }); popped = [];
+    var q = Math.max(0, Math.min(1, (local - 250) / 550));
+    if (s.pop) { var pe = B.querySelector(s.pop); if (pe) { pe.style.transform = 'scale(' + (.55 + .45 * easeBack(q)) + ')'; pe.style.opacity = Math.min(1, q * 1.6); popped.push(pe); } }
+    if (s.reveal) { var re = B.querySelector(s.reveal); if (re) { re.style.opacity = Math.max(0, Math.min(1, (local - 520) / 300)); popped.push(re); } }
+    /* caption crossfades at screen changes; waits for the intro, gives way to the end card */
+    var key = s.id, op = 1;
+    if (moving) { if (p < .5) { key = prev.id; op = 1 - p * 2; } else op = p * 2 - 1; }
+    if (capEl.dataset.k !== key) { capEl.innerHTML = capHTML(T.captions[key]); capEl.dataset.k = key; }
+    var io = ms < 1100 ? 1 : Math.max(0, 1 - (ms - 1100) / 300), eo = s.end ? Math.min(1, local / 350) : 0;
+    capEl.style.opacity = op * Math.max(0, Math.min(1, (ms - 1400) / 300)) * (1 - eo);
+    /* the finger: fades in, taps, ripples out. Selectors are scoped to the screen */
+    tap.style.opacity = 0; if (pressed) { pressed.style.opacity = ''; pressed = null; }
+    if (s.tap) {
+      var el = B.querySelector(s.tap[0]), dt = local - s.tap[1];
+      if (el && dt > -260 && dt < 420) {
+        var r = el.getBoundingClientRect();
+        tap.style.left = (r.left + r.width / 2) + 'px'; tap.style.top = (r.top + r.height / 2) + 'px';
+        if (dt < 0) { tap.style.opacity = (dt + 260) / 260 * .9; tap.style.transform = 'scale(1)'; }
+        else { tap.style.opacity = .9 * (1 - dt / 420); tap.style.transform = 'scale(' + (1 + dt / 420 * .9) + ')'; }
+        if (dt >= 0 && dt < 160) { el.style.opacity = .72; pressed = el; }
+      }
+    }
+    $('tIntro').style.opacity = T.intro === false ? 0 : io;
+    $('tEnd').style.opacity = eo;
+    $('tProg').style.width = (ms / TOTAL * 100) + '%';
+    cur = s.id;
+    return i;
+  };
+  var tm = /[?&]t=(\d+)/.exec(Q); tourAt(tm ? +tm[1] : 0);
+}
+
+/* boot: #<screen-id> deep-links a screen (shoot.sh / hero-stills.sh use it); ?lang=xx picks the language */
+(function(){
+  var lm = /[?&]lang=(\w+)/.exec(Q); if (lm) setLang(lm[1]); else setLang(S.lang);
+  var h = location.hash.slice(1);
+  jump(scr[h] ? h : ORDER[0]);
+  if (scr[h] && !SHOT && !document.documentElement.classList.contains('appmode')) setTimeout(function(){ $('prototype').scrollIntoView(); }, 0);
+  if (/[?&]tour\b/.test(Q) && C.tour) tourInit();
+})();
+</script>
+</body>
+</html>
